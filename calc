@@ -1,0 +1,262 @@
+import math
+import statistics
+from collections import Counter
+
+def validar_numero(mensaje, tipo="float", positivo=False, no_cero=False):
+    """Valida entradas numéricas con manejo de excepciones y restricciones."""
+    while True:
+        try:
+            entrada = input(mensaje).strip()
+            if tipo == "float":
+                valor = float(entrada)
+            elif tipo == "int":
+                valor = int(entrada)
+            
+            if positivo and valor < 0:
+                print("❌ Error: El valor debe ser positivo.")
+                continue
+            if no_cero and valor == 0:
+                print("❌ Error: No se permite división por cero.")
+                continue
+            return valor
+        except ValueError:
+            print(f"❌ Error: '{entrada}' no es un número válido. Intente nuevamente.")
+
+def operaciones_basicas():
+    """Ejecuta operaciones aritméticas básicas con validación robusta."""
+    print("\n" + "="*40)
+    print("โปรแกรบ OPERACIONES BÁSICAS")
+    print("="*40)
+    
+    a = validar_numero("Ingrese el primer número: ", "float")
+    b = validar_numero("Ingrese el segundo número: ", "float")
+    
+    print("\nOperaciones disponibles:")
+    print("1. Suma (+)")
+    print("2. Resta (-)")
+    print("3. Multiplicación (*)")
+    print("4. División (/)")
+    
+    opcion = input("Seleccione una operación (1-4): ").strip()
+    
+    try:
+        if opcion == "1":
+            resultado = a + b
+            operador = "+"
+        elif opcion == "2":
+            resultado = a - b
+            operador = "-"
+        elif opcion == "3":
+            resultado = a * b
+            operador = "*"
+        elif opcion == "4":
+            if b == 0:
+                raise ZeroDivisionError("División por cero no permitida")
+            resultado = a / b
+            operador = "/"
+        else:
+            print("❌ Opción inválida. Operación cancelada.")
+            return
+        
+        print(f"\n✅ Resultado: {a} {operador} {b} = {resultado:.4f}")
+    except ZeroDivisionError as e:
+        print(f"❌ Error matemático: {str(e)}")
+    except Exception as e:
+        print(f"❌ Error inesperado: {str(e)}")
+
+def areas_geometricas():
+    """Calcula áreas y propiedades de figuras geométricas con manejo de errores."""
+    print("\n" + "="*40)
+    print("โปรแกรบ ÁREAS GEOMÉTRICAS")
+    print("="*40)
+    
+    print("Figuras disponibles:")
+    print("1. Círculo (área, diámetro, radio)")
+    print("2. Cuadrado (área)")
+    print("3. Triángulo (área)")
+    print("4. Trapecio (área)")
+    
+    figura = input("Seleccione una figura (1-4): ").strip()
+    
+    try:
+        if figura == "1":  # Círculo
+            print("\n¿Qué dato conoce?")
+            print("1. Radio")
+            print("2. Diámetro")
+            tipo_dato = input("Seleccione (1-2): ").strip()
+            
+            if tipo_dato == "1":
+                radio = validar_numero("Ingrese el radio: ", "float", positivo=True)
+                area = math.pi * radio**2
+                diametro = 2 * radio
+                print(f"\n✅ Resultados para círculo:")
+                print(f"   Radio: {radio:.4f}")
+                print(f"   Diámetro: {diametro:.4f}")
+                print(f"   Área: {area:.4f}")
+            elif tipo_dato == "2":
+                diametro = validar_numero("Ingrese el diámetro: ", "float", positivo=True)
+                radio = diametro / 2
+                area = math.pi * radio**2
+                print(f"\n✅ Resultados para círculo:")
+                print(f"   Diámetro: {diametro:.4f}")
+                print(f"   Radio: {radio:.4f}")
+                print(f"   Área: {area:.4f}")
+            else:
+                print("❌ Opción inválida para círculo.")
+        
+        elif figura == "2":  # Cuadrado
+            lado = validar_numero("Ingrese el lado del cuadrado: ", "float", positivo=True)
+            area = lado**2
+            print(f"\n✅ Área del cuadrado: {area:.4f}")
+        
+        elif figura == "3":  # Triángulo
+            base = validar_numero("Ingrese la base del triángulo: ", "float", positivo=True)
+            altura = validar_numero("Ingrese la altura del triángulo: ", "float", positivo=True)
+            area = (base * altura) / 2
+            print(f"\n✅ Área del triángulo: {area:.4f}")
+        
+        elif figura == "4":  # Trapecio
+            base1 = validar_numero("Ingrese la base mayor: ", "float", positivo=True)
+            base2 = validar_numero("Ingrese la base menor: ", "float", positivo=True)
+            altura = validar_numero("Ingrese la altura: ", "float", positivo=True)
+            area = ((base1 + base2) * altura) / 2
+            print(f"\n✅ Área del trapecio: {area:.4f}")
+        
+        else:
+            print("❌ Figura no válida.")
+    
+    except Exception as e:
+        print(f"❌ Error en cálculo geométrico: {str(e)}")
+
+def estadistica_basica():
+    """Calcula media, mediana y moda de una serie de números ingresados por el usuario."""
+    print("\n" + "="*40)
+    print("โปรแกรบ ESTADÍSTICA BÁSICA")
+    print("="*40)
+    
+    numeros = []
+    print("Ingrese números uno por uno (escriba 'fin' para terminar):")
+    
+    while True:
+        entrada = input("Número: ").strip().lower()
+        if entrada == 'fin':
+            break
+        try:
+            numero = float(entrada)
+            numeros.append(numero)
+        except ValueError:
+            print("❌ Entrada inválida. Ingrese un número o 'fin'.")
+    
+    if not numeros:
+        print("❌ No se ingresaron números. Operación cancelada.")
+        return
+    
+    try:
+        # Media
+        media = sum(numeros) / len(numeros)
+        
+        # Mediana
+        numeros_ordenados = sorted(numeros)
+        n = len(numeros_ordenados)
+        if n % 2 == 0:
+            mediana = (numeros_ordenados[n//2 - 1] + numeros_ordenados[n//2]) / 2
+        else:
+            mediana = numeros_ordenados[n//2]
+        
+        # Moda (maneja múltiples modas seleccionando la más pequeña)
+        conteo = Counter(numeros_ordenados)
+        max_frecuencia = max(conteo.values())
+        modas = [num for num, freq in conteo.items() if freq == max_frecuencia]
+        moda = min(modas)  # Selecciona la moda más pequeña en caso de empate
+        
+        print("\n✅ Resultados estadísticos:")
+        print(f"   Media: {media:.4f}")
+        print(f"   Mediana: {mediana:.4f}")
+        print(f"   Moda: {moda:.4f} (frecuencia: {max_frecuencia})")
+    
+    except Exception as e:
+        print(f"❌ Error en cálculos estadísticos: {str(e)}")
+
+def es_numero_fibonacci(n):
+    """Verifica si un número pertenece a la sucesión de Fibonacci usando propiedades matemáticas."""
+    if n < 0:
+        return False
+    # Propiedad: Un número es de Fibonacci si 5n²±4 es un cuadrado perfecto
+    def es_cuadrado_perfecto(x):
+        raiz = int(math.isqrt(x))
+        return raiz * raiz == x
+    
+    return es_cuadrado_perfecto(5*n*n + 4) or es_cuadrado_perfecto(5*n*n - 4)
+
+def sucesion_fibonacci():
+    """Genera términos de la sucesión de Fibonacci desde un número inicial válido."""
+    print("\n" + "="*40)
+    print("โปรแกรb SUCESIÓN DE FIBONACCI")
+    print("="*40)
+    
+    while True:
+        inicio = validar_numero("Ingrese el número inicial: ", "int", positivo=True)
+        if es_numero_fibonacci(inicio):
+            break
+        print(f"❌ '{inicio}' no pertenece a la sucesión real de Fibonacci. Intente con otro número.")
+    
+    terminos = validar_numero("¿Cuántos términos desea generar? ", "int", positivo=True)
+    
+    # Generar sucesión real (no inventada)
+    fib_sequence = []
+    a, b = 0, 1
+    
+    # Avanzar hasta encontrar el número inicial
+    while a < inicio:
+        a, b = b, a + b
+    
+    # Si el número inicial es 0 o 1, ajustar inicio
+    if inicio == 0:
+        fib_sequence = [0]
+        a, b = 0, 1
+    elif inicio == 1:
+        fib_sequence = [1]
+        a, b = 1, 2  # Saltar el primer 1 para evitar duplicados innecesarios
+    
+    # Generar términos restantes
+    while len(fib_sequence) < terminos:
+        if a >= inicio:
+            fib_sequence.append(a)
+        a, b = b, a + b
+    
+    fib_sequence = fib_sequence[:terminos]  # Asegurar cantidad exacta de términos
+    
+    print(f"\n✅ Sucesión de Fibonacci desde {inicio} ({terminos} términos):")
+    print(" → ".join(map(str, fib_sequence)))
+
+def menu_principal():
+    """Menú interactivo principal con navegación y manejo de errores."""
+    while True:
+        print("\n" + "="*50)
+        print("โปรแกรb CALCULADORA MULTIFUNCIONAL")
+        print("="*50)
+        print("1. Operaciones Básicas (+, -, *, /)")
+        print("2. Cálculo de Áreas Geométricas")
+        print("3. Estadística Básica (Media, Mediana, Moda)")
+        print("4. Sucesión de Fibonacci")
+        print("5. Salir")
+        
+        opcion = input("\nSeleccione una opción (1-5): ").strip()
+        
+        if opcion == "1":
+            operaciones_basicas()
+        elif opcion == "2":
+            areas_geometricas()
+        elif opcion == "3":
+            estadistica_basica()
+        elif opcion == "4":
+            sucesion_fibonacci()
+        elif opcion == "5":
+            print("\n¡Gracias por usar la calculadora! 👋")
+            print("="*50)
+            break
+        else:
+            print("❌ Opción inválida. Por favor seleccione un número entre 1 y 5.")
+
+if __name__ == "__main__":
+    menu_principal()
